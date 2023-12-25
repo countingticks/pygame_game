@@ -5,6 +5,7 @@ from src.utils.debug import debug
 from src.utils.key_handler import KeyHandler
 from src.entity import EntityPhysics
 from src.sprite_sheet import *
+from src.tile_map import TileMap
 
 from src.constants import PLAYER
 
@@ -22,6 +23,7 @@ class Game:
 
         self.key_handler = KeyHandler()
         self.player = EntityPhysics(self, PLAYER, (30, 30), (32, 32))
+        self.tile_map = TileMap(self)
     
     def run(self):
         self.prev_time = time.time()
@@ -44,8 +46,8 @@ class Game:
             self.clock.tick(60)
 
     def render(self):
-        self.canvas.fill((220, 100, 20))    
-        # pygame.draw.rect(self.canvas, (255, 255, 255), (50, 50, 60, 60))
+        self.canvas.fill((220, 100, 20))  
+        self.tile_map.render(self.canvas)  
         self.player.render(self.canvas)
         self.window.blit(pygame.transform.scale(self.canvas, self.window.get_size()), (0, 0))
 

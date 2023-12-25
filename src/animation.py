@@ -27,3 +27,4 @@ class Animation:
             surface.blit(pygame.transform.flip(self.entity[action]['images'][int(self.frame)], True, False), pos)
         else:
             surface.blit(self.entity[action]['images'][int(self.frame)], pos)
+            
