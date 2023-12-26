@@ -8,6 +8,7 @@ class KeyHandler:
             "left": False,
             "right": False,
             "space": False,
+            "quit": False
         }
 
     def update(self):
@@ -18,3 +19,4 @@ class KeyHandler:
         self.actions["left"] = key[pygame.K_a]
         self.actions["right"] = key[pygame.K_d]
         self.actions["space"] = key[pygame.K_SPACE]
+        self.actions["quit"] = key[pygame.K_q]

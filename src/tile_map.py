@@ -1,4 +1,4 @@
-from src.constants import TERRAIN
+from src.config import TERRAIN
 from src.sprite_sheet import load_sprite_sheet
 
 class TileMap:

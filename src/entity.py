@@ -8,7 +8,7 @@ class EntityPhysics:
     def __init__(self, game, entity, pos, size):
         self.game = game
         self.entity = entity
-        self.pos = pygame.Vector2(pos)
+        self.pos = pygame.Vector2(list(pos))
         self.size = size
 
         load_sprite_sheet(self.entity)
