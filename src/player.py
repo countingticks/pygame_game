@@ -11,7 +11,7 @@ class Player(PhysicsEntity):
         self.air_time = 0
         self.jumps = 1
         self.auto_flip = 1
-        self.render_rect = False
+        self.render_rect = True
 
     def update(self, dt, tile_map):
         self.apply_force(dt, ((self.game.key_handler.actions['right'] - self.game.key_handler.actions['left']) * self.speed, 0))

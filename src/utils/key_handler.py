@@ -20,3 +20,4 @@ class KeyHandler:
         self.actions["right"] = key[pygame.K_d]
         self.actions["space"] = key[pygame.K_SPACE]
         self.actions["quit"] = key[pygame.K_q]
+

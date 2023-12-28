@@ -6,7 +6,9 @@ from src.utils.key_handler import KeyHandler
 from src.player import Player
 from src.sprite_sheet import *
 from src.tile_map import TileMap
+from src.camera import Camera
 from src.config import PLAYER
+from src.background.background import Background
 
 from collections import deque
 
@@ -27,8 +29,11 @@ class Game:
 
         self.key_handler = KeyHandler()
         self.player = Player(self, PLAYER, (30, 30))
-        self.tile_map = TileMap(self)
-    
+        self.tile_map = TileMap(self, tile_size=[32, 32])
+        self.camera = Camera(self.canvas.get_size(), slowness=0.3)
+        self.camera.set_target(self.player)
+        self.background = Background()
+
     def run(self):
         self.prev_time = time.time()
         
@@ -45,13 +50,15 @@ class Game:
 
     def update(self):
         self.key_handler.update()
+        self.background.update(self.delta_time)
         self.player.update(self.delta_time, self.tile_map)
+        self.camera.update(self.delta_time)
         pygame.display.update()
 
     def render(self):
-        self.canvas.fill((220, 100, 20))  
-        self.tile_map.render(self.canvas)  
-        self.player.render(self.canvas)
+        self.background.render(self.canvas, offset=self.camera)
+        self.tile_map.render(self.canvas, offset=self.camera)  
+        self.player.render(self.canvas, offset=self.camera)
         self.window.blit(pygame.transform.scale(self.canvas, self.window.get_size()), (0, 0))
 
     def calculate_delta_time(self):

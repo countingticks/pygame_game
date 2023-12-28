@@ -26,6 +26,8 @@ class Animation:
                     self.frame = (self.frame + self.image_duration * dt) % self.entity[action]['frames']
                 else:
                     self.frame = min(self.frame + self.image_duration * dt, self.entity[action]['frames'] - 1)
+                    if self.frame >= self.entity[action]['frames'] - 1:
+                        self.done = True
 
     def render(self, surface, action, flip, pos):
-        surface.blit(pygame.transform.flip(self.entity[action]['images'][int(self.frame)], flip[0], flip[1]), pos)
+        surface.blit(pygame.transform.flip(self.entity[action]['images'][int(self.frame)], *flip), pos)
