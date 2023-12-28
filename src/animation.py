@@ -1,4 +1,7 @@
+import math
 import pygame
+
+from src.sprite_sheet import *
 
 
 class Animation: 
@@ -9,6 +12,8 @@ class Animation:
         self.done = False
         self.previous_action = None
         self.frame = 0
+
+        load_sprite_sheet(self.entity)
 
     def update(self, action, dt):
         if self.previous_action != action:
@@ -22,9 +27,5 @@ class Animation:
                 else:
                     self.frame = min(self.frame + self.image_duration * dt, self.entity[action]['frames'] - 1)
 
-    def render(self, surface, action, direction, pos):
-        if direction == -1:
-            surface.blit(pygame.transform.flip(self.entity[action]['images'][int(self.frame)], True, False), pos)
-        else:
-            surface.blit(self.entity[action]['images'][int(self.frame)], pos)
-            
+    def render(self, surface, action, flip, pos):
+        surface.blit(pygame.transform.flip(self.entity[action]['images'][int(self.frame)], flip[0], flip[1]), pos)

@@ -3,7 +3,7 @@ import time
 
 from src.utils.debug import debug
 from src.utils.key_handler import KeyHandler
-from src.entity import EntityPhysics
+from src.player import Player
 from src.sprite_sheet import *
 from src.tile_map import TileMap
 from src.config import PLAYER
@@ -17,7 +17,7 @@ class Game:
         pygame.display.set_caption('Pygame game')
 
         self.window = pygame.display.set_mode((1280, 720))
-        self.canvas = pygame.Surface((320, 180))
+        self.canvas = pygame.Surface((569, 320))
         self.clock = pygame.time.Clock()
 
         self.running = True
@@ -26,7 +26,7 @@ class Game:
         self.frames_log = deque(maxlen=60)
 
         self.key_handler = KeyHandler()
-        self.player = EntityPhysics(self, PLAYER, (30, 30), (32, 32))
+        self.player = Player(self, PLAYER, (30, 30))
         self.tile_map = TileMap(self)
     
     def run(self):
@@ -45,7 +45,7 @@ class Game:
 
     def update(self):
         self.key_handler.update()
-        self.player.update(self.delta_time, (self.key_handler.actions['right'] - self.key_handler.actions['left'], self.key_handler.actions['down'] - self.key_handler.actions['up']))
+        self.player.update(self.delta_time, self.tile_map)
         pygame.display.update()
 
     def render(self):
@@ -72,8 +72,10 @@ class Game:
             self.running = False
 
     def debug_info(self):
-        debug(f'{self.fps:.1f}')
-        debug(self.key_handler.actions, y=35)
+        debug(f'fps: {self.fps:.1f}', y=10)
+        debug(f'keys: {self.key_handler.actions}', y=35)
+        debug(f'collision: {self.tile_map.collision_tiles_around(self.player.pos)}', y=60)
+        debug(f'velocity: x[{self.player.velocity[0]:.2f}], y[{self.player.velocity[1]:.2f}]', y=85)
 
 
 if __name__ == "__main__":
