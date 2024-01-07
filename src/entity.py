@@ -7,7 +7,7 @@ class Entity:
     def __init__(self, assets, pos):
         self.assets = assets
         self.pos = list(pos)
-        self.size = self.assets['idle']['dimensions'] # we will take this info from a config later on
+        self.size = self.assets['idle']['dimensions']
         self.size_collision = (9, 22)
         self.size_offset = ((self.size[0] - self.size_collision[0]) // 2, (self.size[1] - self.size_collision[1]))
         self.action = None
