@@ -2,12 +2,13 @@ import pygame
 import time
 
 from src.utils.debug import debug
-from src.utils.key_handler import KeyHandler
+from src.utils.input_handler import InputHandler
 from src.player import Player
+from src.particles.particles import Particles
 from src.sprite_sheet import *
 from src.tile_map import TileMap
 from src.camera import Camera
-from src.config import PLAYER
+from src.config import PLAYER_TEST, TERRAIN, DECORATION, PARTICLE
 from src.background.background import Background
 
 from collections import deque
@@ -19,7 +20,7 @@ class Game:
         pygame.display.set_caption('Pygame game')
 
         self.window = pygame.display.set_mode((1280, 720))
-        self.canvas = pygame.Surface((569, 320))
+        self.canvas = pygame.Surface((569, 320)) # 426 240
         self.clock = pygame.time.Clock()
 
         self.running = True
@@ -27,12 +28,17 @@ class Game:
         self.fps = 0
         self.frames_log = deque(maxlen=60)
 
-        self.key_handler = KeyHandler()
-        self.player = Player(self, PLAYER, (30, 30))
-        self.tile_map = TileMap(self, tile_size=[32, 32])
+        self.assets = {}
+        self.load_assets()
+
+        self.key_handler = InputHandler()
+        self.player = Player(self, self.assets['player'], (150, 10))
+        self.tile_map = TileMap(self, 'src/levels/map.json', tile_size=[16, 16])
         self.camera = Camera(self.canvas.get_size(), slowness=0.3)
-        self.camera.set_target(self.player)
+        self.particles = Particles(self.tile_map, self.assets['particle'])
         self.background = Background()
+
+        self.camera.set_target(self.player)
 
     def run(self):
         self.prev_time = time.time()
@@ -40,7 +46,7 @@ class Game:
         while self.running:
             self.calculate_delta_time()
             self.calculate_fps()
-            self.handle_events()
+            self.quit_game()
             self.update()
             self.render()
             self.debug_info()
@@ -53,13 +59,32 @@ class Game:
         self.background.update(self.delta_time)
         self.player.update(self.delta_time, self.tile_map)
         self.camera.update(self.delta_time)
+        self.particles.update(self.delta_time)
         pygame.display.update()
 
     def render(self):
         self.background.render(self.canvas, offset=self.camera)
         self.tile_map.render(self.canvas, offset=self.camera)  
+        self.particles.render(self.canvas, offset=self.camera)
         self.player.render(self.canvas, offset=self.camera)
         self.window.blit(pygame.transform.scale(self.canvas, self.window.get_size()), (0, 0))
+
+    def load_assets(self):
+        assets_groups = {'player': PLAYER_TEST, 'terrain': TERRAIN, 'decoration': DECORATION, 'particle': PARTICLE}
+        self.assets['groups'] = []
+
+        for group in assets_groups:
+            load_sprite_sheet_test(assets_groups[group])
+            self.assets['groups'].append(group)
+            self.assets[group] = {}
+            self.assets[group]['groups'] = assets_groups[group]['groups']
+
+            for asset in assets_groups[group]['groups']:
+                self.assets[group][asset] = {}
+                self.assets[group][asset]['sprite_sheet'] = assets_groups[group][asset]['sprite_sheet']
+                self.assets[group][asset]['images'] = assets_groups[group][asset]['images']
+                self.assets[group][asset]['dimensions'] = assets_groups[group][asset]['dimensions']
+                self.assets[group][asset]['variants'] = assets_groups[group][asset]['variants']
 
     def calculate_delta_time(self):
         current_time = time.time()
@@ -70,20 +95,14 @@ class Game:
         self.frames_log.append(self.delta_time)
         self.fps = len(self.frames_log) / sum(self.frames_log) if sum(self.frames_log) > 0 else 0
 
-    def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-
-        if self.key_handler.actions['quit']:
+    def quit_game(self):
+        if self.key_handler.actions['quit'].is_pressed:
             self.running = False
 
     def debug_info(self):
         debug(f'fps: {self.fps:.1f}', y=10)
-        debug(f'keys: {self.key_handler.actions}', y=35)
-        debug(f'collision: {self.tile_map.collision_tiles_around(self.player.pos)}', y=60)
-        debug(f'velocity: x[{self.player.velocity[0]:.2f}], y[{self.player.velocity[1]:.2f}]', y=85)
+        debug(f'collision: {self.tile_map.collision_tiles_around(self.player.pos)}', y=35)
 
 
 if __name__ == "__main__":
-    game = Game().run()
+    Game().run()

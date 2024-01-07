@@ -9,7 +9,7 @@ class Entity:
         self.pos = list(pos)
         self.size = (32, 32) # we will take this info from a config later on
         self.size_collision = (22, 26)
-        self.size_offset = ((self.size[0] - self.size_collision[0]) / 2, (self.size[1] - self.size_collision[1]))
+        self.size_offset = ((self.size[0] - self.size_collision[0]) // 2, (self.size[1] - self.size_collision[1]))
         self.action = None
 
         self.opacity = 255
@@ -30,11 +30,16 @@ class Entity:
     def collision_rect(self):
         difference = ((self.size[0] - self.size_collision[0]), (self.size[1] - self.size_collision[1]))
         buffer = (self.pos[0] + difference[0] / 2, self.pos[1] + difference[1])
+
         return pygame.Rect(*buffer, *self.size_collision)
     
     @property
     def center(self):
         return self.rect.center
+    
+    @property
+    def collision_center(self):
+        return self.collision_rect.center
     
     def set_action(self, action):
         if self.action == action:
@@ -42,15 +47,16 @@ class Entity:
         self.action = action    
     
     def update(self, dt):
-        self.animation.update(self.action, dt)
+        self.animation.update(dt, self.action)
 
     def render(self, surface, offset=(0, 0)):
         if self.visible:
-            self.animation.render(surface, self.action, self.flip, (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+            self.animation.render(surface, (self.pos[0] - offset[0], self.pos[1] - offset[1]), selected_group=self.action, flip=self.flip)
             if self.render_rect:
                 pygame.draw.rect(surface, (255, 255, 0), (self.rect.x - offset[0], self.rect.y - offset[1], self.rect.width, self.rect.height), 1)
                 pygame.draw.rect(surface, (255, 255, 255), (self.collision_rect.x - offset[0], self.collision_rect.y - offset[1], self.collision_rect.width, self.collision_rect.height), 1)
-            
+                pygame.draw.circle(surface, (255, 0, 0), (self.collision_center[0] - offset[0], self.collision_center[1] - offset[1]), 2)
+
 
 class PhysicsEntity(Entity): 
     def __init__(self, entity_type, pos):
@@ -93,9 +99,8 @@ class PhysicsEntity(Entity):
 
     def physics_processor(self, movement, tile_map):
         self.collision = {'up': False, 'down': False, 'left': False, 'right': False}
-
         entity_rect = self.collision_rect
-        for rect in tile_map.collision_tiles_around(self.pos):
+        for rect in tile_map.collision_tiles_around(self.collision_center):
             if entity_rect.colliderect(rect):
                 if movement[0] > 0:
                     entity_rect.right = rect.left

@@ -11,12 +11,12 @@ class Player(PhysicsEntity):
         self.air_time = 0
         self.jumps = 1
         self.auto_flip = 1
-        self.render_rect = True
+        self.render_rect = False
 
     def update(self, dt, tile_map):
-        self.apply_force(dt, ((self.game.key_handler.actions['right'] - self.game.key_handler.actions['left']) * self.speed, 0))
+        self.apply_force(dt, ((self.game.key_handler.actions['right'].is_held - self.game.key_handler.actions['left'].is_held) * self.speed, 0))
         
-        if self.game.key_handler.actions['space']:
+        if self.game.key_handler.actions['space'].is_pressed:
             if self.jumps > 0:
                 self.velocity[1] = -225
                 self.air_time = 0.1

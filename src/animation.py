@@ -1,4 +1,3 @@
-import math
 import pygame
 
 from src.sprite_sheet import *
@@ -10,24 +9,32 @@ class Animation:
         self.image_duration = image_duration
         self.loop = loop
         self.done = False
-        self.previous_action = None
+        self.previous_group = None
         self.frame = 0
 
-        load_sprite_sheet(self.entity)
-
-    def update(self, action, dt):
-        if self.previous_action != action:
+    def update(self, dt, selected_group=None):
+        if self.previous_group != selected_group:
             self.frame = 0
-            self.previous_action = action
+            self.previous_group = selected_group
 
-        for group in self.entity['sheet']['groups']:
-            if (action == group):
-                if self.loop: 
-                    self.frame = (self.frame + self.image_duration * dt) % self.entity[action]['frames']
-                else:
-                    self.frame = min(self.frame + self.image_duration * dt, self.entity[action]['frames'] - 1)
-                    if self.frame >= self.entity[action]['frames'] - 1:
-                        self.done = True
+        if selected_group == None:
+            self.change_frame(self.entity, dt)
+        else:
+            for group in self.entity['groups']:
+                if (selected_group == group):
+                    self.change_frame(self.entity[selected_group], dt)
 
-    def render(self, surface, action, flip, pos):
-        surface.blit(pygame.transform.flip(self.entity[action]['images'][int(self.frame)], *flip), pos)
+    def render(self, surface, pos, selected_group=None, flip=(False, False)):
+        if selected_group == None:
+            surface.blit(pygame.transform.flip(self.entity['images'][int(self.frame)], *flip), pos)
+        else:
+            surface.blit(pygame.transform.flip(self.entity[selected_group]['images'][int(self.frame)], *flip), pos)
+        
+    def change_frame(self, entity, dt):
+        if self.loop: 
+            self.frame = (self.frame + self.image_duration * dt) % entity['variants']
+        else:
+            self.frame = min(self.frame + self.image_duration * dt, entity['variants'] - 1)
+            if self.frame >= entity['variants'] - 1:
+                self.done = True
+                
