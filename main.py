@@ -8,7 +8,7 @@ from src.particles.particles import Particles
 from src.sprite_sheet import *
 from src.tile_map import TileMap
 from src.camera import Camera
-from src.config import PLAYER_TEST, TERRAIN, DECORATION, PARTICLE
+from src.config import PLAYER, TERRAIN, DECORATION, PARTICLE
 from src.background.background import Background
 
 from collections import deque
@@ -20,7 +20,7 @@ class Game:
         pygame.display.set_caption('Pygame game')
 
         self.window = pygame.display.set_mode((1280, 720))
-        self.canvas = pygame.Surface((569, 320)) # 426 240
+        self.canvas = pygame.Surface((426, 240)) # 426 240 # 569 320
         self.clock = pygame.time.Clock()
 
         self.running = True
@@ -70,7 +70,7 @@ class Game:
         self.window.blit(pygame.transform.scale(self.canvas, self.window.get_size()), (0, 0))
 
     def load_assets(self):
-        assets_groups = {'player': PLAYER_TEST, 'terrain': TERRAIN, 'decoration': DECORATION, 'particle': PARTICLE}
+        assets_groups = {'player': PLAYER, 'terrain': TERRAIN, 'decoration': DECORATION, 'particle': PARTICLE}
         self.assets['groups'] = []
 
         for group in assets_groups:

@@ -2,12 +2,12 @@ from src.entity import PhysicsEntity
 
 
 class Player(PhysicsEntity):
-    def __init__(self, game, entity_type, pos):
-        super().__init__(entity_type, pos)
+    def __init__(self, game, assets, pos):
+        super().__init__(assets, pos)
 
         self.game = game
-        self.speed = 150
-        self.acceleration[1] = 500
+        self.speed = 100
+        self.acceleration[1] = 400
         self.air_time = 0
         self.jumps = 1
         self.auto_flip = 1

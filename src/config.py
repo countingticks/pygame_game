@@ -1,18 +1,5 @@
 BASE_PATH = "data/"
 
-PLAYER = {
-    'sheet': {
-        'path': BASE_PATH + 'character/sprite_sheet.png',
-        'groups': ['idle', 'run', 'jump', 'fall'],
-        'width': 32,
-        'height': 32,
-    },
-    'idle': {'images': None, 'frames': 11},
-    'run': {'images': None, 'frames': 12},
-    'jump': {'images': None, 'frames': 1},
-    'fall': {'images': None, 'frames': 1},
-}
-
 CLOUDS = {
     'sheet': {
         'path': BASE_PATH + 'clouds/sprite_sheet.png',
@@ -27,32 +14,32 @@ BACKGROUND = {
     'image': None,
 }
 
-PLAYER_TEST = {
+PLAYER = {
     'groups': ['idle', 'run', 'jump', 'fall'],
     'idle': {
         'path': BASE_PATH + 'character/idle_sprite_sheet.png',
-        'dimensions': [32, 32],
-        'variants': 11,
+        'dimensions': [15, 25],
+        'variants': 17,
         'sprite_sheet': None,
         'images': []
     },
     'run': {
         'path': BASE_PATH + 'character/run_sprite_sheet.png',
-        'dimensions': [32, 32],
-        'variants': 12,
+        'dimensions': [15, 25],
+        'variants': 13,
         'sprite_sheet': None,
         'images': []
     },
     'jump': {
         'path': BASE_PATH + 'character/jump_sprite_sheet.png',
-        'dimensions': [32, 32],
+        'dimensions': [15, 25],
         'variants': 1,
         'sprite_sheet': None,
         'images': []
     },
     'fall': {
         'path': BASE_PATH + 'character/fall_sprite_sheet.png',
-        'dimensions': [32, 32],
+        'dimensions': [15, 25],
         'variants': 1,
         'sprite_sheet': None,
         'images': []
@@ -200,9 +187,11 @@ AUTO_TILE_MAP = {
     tuple(sorted([(1, 0), (0, -1), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1)])): 4,
 
     tuple(sorted([(0, 1), (0, -1), (1, -1), (1, 0), (1, 1)])): 5,
+    tuple(sorted([(0, 1), (0, -1), (1, 1), (1, 0), (1, -1), (-1, -1)])): 5,
     tuple(sorted([(0, 1), (0, -1), (-1, 1), (1, -1), (1, 0), (1, 1)])): 5,
     
     tuple(sorted([(0, 1), (0, -1), (-1, -1), (-1, 0), (-1, 1)])): 6,
+    tuple(sorted([(0, 1), (0, -1), (-1, 1), (-1, 0), (-1, -1), (1, -1)])): 6,
     tuple(sorted([(0, 1), (0, -1), (1, 1), (-1, -1), (-1, 0), (-1, 1)])): 6,
 
     tuple(sorted([(1, 0), (0, -1), (1, -1)])): 7,

@@ -4,11 +4,11 @@ from src.animation import Animation
 
 
 class Entity:
-    def __init__(self, entity_type, pos):
-        self.type = entity_type
+    def __init__(self, assets, pos):
+        self.assets = assets
         self.pos = list(pos)
-        self.size = (32, 32) # we will take this info from a config later on
-        self.size_collision = (22, 26)
+        self.size = self.assets['idle']['dimensions'] # we will take this info from a config later on
+        self.size_collision = (9, 22)
         self.size_offset = ((self.size[0] - self.size_collision[0]) // 2, (self.size[1] - self.size_collision[1]))
         self.action = None
 
@@ -20,7 +20,7 @@ class Entity:
 
         self.visible = True
         self.render_rect = False
-        self.animation = Animation(self.type, image_duration=20)
+        self.animation = Animation(self.assets, image_duration=20)
 
     @property
     def rect(self):
@@ -59,8 +59,8 @@ class Entity:
 
 
 class PhysicsEntity(Entity): 
-    def __init__(self, entity_type, pos):
-        super().__init__(entity_type, pos)
+    def __init__(self, assets, pos):
+        super().__init__(assets, pos)
         self.collision = {'up': False, 'down': False, 'left': False, 'right': False}
 
         self.velocity = [0, 0]
