@@ -4,12 +4,12 @@ from src.animation import Animation
 
 
 class Entity:
-    def __init__(self, assets, pos):
+    def __init__(self, assets, camera, pos, image_duration=20, custom_collision_size=None):
         self.assets = assets
         self.pos = list(pos)
         self.size = self.assets['idle']['dimensions']
-        self.size_collision = (9, 22)
-        self.size_offset = ((self.size[0] - self.size_collision[0]) // 2, (self.size[1] - self.size_collision[1]))
+        self.custom_collision_size = self.size if custom_collision_size is None else custom_collision_size
+        self.offset_size = ((self.size[0] - self.custom_collision_size[0]) // 2, (self.size[1] - self.custom_collision_size[1]))
         self.action = None
 
         self.opacity = 255
@@ -20,7 +20,7 @@ class Entity:
 
         self.visible = True
         self.render_rect = False
-        self.animation = Animation(self.assets, image_duration=20)
+        self.animation = Animation(self.assets, camera, image_duration=image_duration)
 
     @property
     def rect(self):
@@ -28,10 +28,13 @@ class Entity:
     
     @property
     def collision_rect(self):
-        difference = ((self.size[0] - self.size_collision[0]), (self.size[1] - self.size_collision[1]))
+        if self.custom_collision_size == None or self.custom_collision_size == self.size:
+            return self.rect
+        
+        difference = ((self.size[0] - self.custom_collision_size[0]), (self.size[1] - self.custom_collision_size[1]))
         buffer = (self.pos[0] + difference[0] / 2, self.pos[1] + difference[1])
 
-        return pygame.Rect(*buffer, *self.size_collision)
+        return pygame.Rect(*buffer, *self.custom_collision_size)
     
     @property
     def center(self):
@@ -59,8 +62,8 @@ class Entity:
 
 
 class PhysicsEntity(Entity): 
-    def __init__(self, assets, pos):
-        super().__init__(assets, pos)
+    def __init__(self, assets, camera, pos, image_duration=20, custom_collision_size=None):
+        super().__init__(assets, camera, pos, image_duration, custom_collision_size)
         self.collision = {'up': False, 'down': False, 'left': False, 'right': False}
 
         self.velocity = [0, 0]
@@ -116,9 +119,9 @@ class PhysicsEntity(Entity):
                     self.collision['up'] = True
 
                 if entity_rect.x != self.collision_rect.x:
-                    self.pos[0] = entity_rect.x - self.size_offset[0]
+                    self.pos[0] = entity_rect.x - self.offset_size[0]
                 if entity_rect.y != self.collision_rect.y:
-                    self.pos[1] = entity_rect.y - self.size_offset[1]
+                    self.pos[1] = entity_rect.y - self.offset_size[1]
                 entity_rect = self.collision_rect
 
     def apply_force(self, dt, vec):

@@ -1,3 +1,6 @@
+import pygame
+
+
 class Camera:
     def __init__(self, size, pos=(0, 0), slowness=1):
         self.pos = list(pos)
@@ -17,6 +20,10 @@ class Camera:
             return (self.target_entity.center[0] - self.size[0] // 2, self.target_entity.center[1] - self.size[1] // 2)
         elif self.target_pos:
             return (self.target_pos[0] - self.size[0] // 2, self.target_pos[0] - self.size[1] // 2)
+    
+    @property
+    def rect(self):
+        return pygame.Rect(self.int_pos, self.size)
 
     def set_target(self, target):
         if hasattr(target, 'center'):

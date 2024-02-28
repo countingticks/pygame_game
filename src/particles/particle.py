@@ -2,12 +2,12 @@ from src.animation import Animation
 
 
 class Particle:
-    def __init__(self, assets, pos, velocity=[0, 0], frame=0, image_duration=20, loop=False):
+    def __init__(self, assets, camera, pos, velocity=[0, 0], frame=0, image_duration=20, loop=False):
         self.assets = assets
         self.pos = list(pos)
         self.velocity = list(velocity)
         self.frame = frame
-        self.animation = Animation(self.assets, image_duration=image_duration, loop=loop)
+        self.animation = Animation(self.assets, camera, image_duration=image_duration, loop=loop)
         self.animation.frame = frame
 
     def update(self, dt):

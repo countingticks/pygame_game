@@ -4,8 +4,9 @@ from src.sprite_sheet import *
 
 
 class Animation: 
-    def __init__(self, entity, image_duration=20, loop=True):
+    def __init__(self, entity, camera, image_duration=20, loop=True):
         self.entity = entity
+        self.camera = camera
         self.image_duration = image_duration
         self.loop = loop
         self.done = False
@@ -26,10 +27,16 @@ class Animation:
 
     def render(self, surface, pos, selected_group=None, flip=(False, False)):
         if selected_group == None:
-            surface.blit(pygame.transform.flip(self.entity['images'][int(self.frame)], *flip), pos)
+            image = pygame.transform.flip(self.entity['images'][int(self.frame)], *flip)
+            self.blit_image(surface, image, pos)
         else:
-            surface.blit(pygame.transform.flip(self.entity[selected_group]['images'][int(self.frame)], *flip), pos)
-        
+            image = pygame.transform.flip(self.entity[selected_group]['images'][int(self.frame)], *flip)
+            self.blit_image(surface, image, pos)
+    
+    def blit_image(self, surface, image, pos):
+        if -image.get_width() < pos[0] < self.camera.rect.width and -image.get_height() < pos[1] < self.camera.rect.height:
+            surface.blit(image, pos)
+
     def change_frame(self, entity, dt):
         if self.loop: 
             self.frame = (self.frame + self.image_duration * dt) % entity['variants']

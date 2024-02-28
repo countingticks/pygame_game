@@ -6,7 +6,7 @@ from src.utils.input_handler import InputHandler
 from src.sprite_sheet import *
 from src.tile_map import TileMap
 
-from src.config import TERRAIN, DECORATION
+from src.config import TERRAIN, DECORATION, SPAWNER
 
 from collections import deque
 
@@ -25,8 +25,11 @@ class Editor:
         self.fps = 0
         self.frames_log = deque(maxlen=60)
 
+        self.assets = {}
+        self.load_assets()
+
         self.key_handler = InputHandler()
-        self.tile_map = TileMap(self, 'src/levels/map.json', tile_size=[16, 16])
+        self.tile_map = self.tile_map = TileMap(None, self.assets, 'src/levels/map.json', tile_size=[16, 16])
 
         self.scroll = [0, 0]
         self.render_scale = (self.window.get_width() / self.canvas.get_width(), self.window.get_height() / self.canvas.get_height())
@@ -36,9 +39,6 @@ class Editor:
         self.asset_group = 0
         self.tile_group = 0
         self.tile_variant = 0
-
-        self.assets = {}
-        self.load_assets()
 
     def run(self):
         self.prev_time = time.time()
@@ -180,7 +180,7 @@ class Editor:
                     self.tile_map.off_grid_tiles.remove(tile)
                  
     def load_assets(self):
-        assets_groups = {'terrain': TERRAIN, 'decoration': DECORATION}
+        assets_groups = {'terrain': TERRAIN, 'decoration': DECORATION, 'spawner': SPAWNER}
         self.assets['groups'] = []
 
         for group in assets_groups:

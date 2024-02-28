@@ -1,0 +1,2 @@
+don't render particles outside of the camera
+don't render off grid tiles outside of the camera

@@ -8,7 +8,7 @@ from src.particles.particles import Particles
 from src.sprite_sheet import *
 from src.tile_map import TileMap
 from src.camera import Camera
-from src.config import PLAYER, TERRAIN, DECORATION, PARTICLE
+from src.config import PLAYER, TERRAIN, DECORATION, PARTICLE, SPAWNER
 from src.background.background import Background
 
 from collections import deque
@@ -32,10 +32,10 @@ class Game:
         self.load_assets()
 
         self.key_handler = InputHandler()
-        self.player = Player(self, self.assets['player'], (150, 10))
-        self.tile_map = TileMap(self, 'src/levels/map.json', tile_size=[16, 16])
         self.camera = Camera(self.canvas.get_size(), slowness=0.3)
-        self.particles = Particles(self.tile_map, self.assets['particle'])
+        self.tile_map = TileMap(self.camera, self.assets, 'src/levels/map.json', tile_size=[16, 16])
+        self.player = Player(self.tile_map, self.key_handler, self.assets['player'], self.camera, (150, 10))
+        self.particles = Particles(self.tile_map, self.assets['particle'], self.camera)
         self.background = Background()
 
         self.camera.set_target(self.player)
@@ -57,7 +57,7 @@ class Game:
     def update(self):
         self.key_handler.update()
         self.background.update(self.delta_time)
-        self.player.update(self.delta_time, self.tile_map)
+        self.player.update(self.delta_time)
         self.camera.update(self.delta_time)
         self.particles.update(self.delta_time)
         pygame.display.update()
@@ -70,7 +70,7 @@ class Game:
         self.window.blit(pygame.transform.scale(self.canvas, self.window.get_size()), (0, 0))
 
     def load_assets(self):
-        assets_groups = {'player': PLAYER, 'terrain': TERRAIN, 'decoration': DECORATION, 'particle': PARTICLE}
+        assets_groups = {'player': PLAYER, 'terrain': TERRAIN, 'decoration': DECORATION, 'spawner': SPAWNER, 'particle': PARTICLE}
         self.assets['groups'] = []
 
         for group in assets_groups:

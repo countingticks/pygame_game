@@ -33,14 +33,14 @@ PLAYER = {
     'jump': {
         'path': BASE_PATH + 'character/jump_sprite_sheet.png',
         'dimensions': [15, 25],
-        'variants': 1,
+        'variants': 5,
         'sprite_sheet': None,
         'images': []
     },
     'fall': {
         'path': BASE_PATH + 'character/fall_sprite_sheet.png',
         'dimensions': [15, 25],
-        'variants': 1,
+        'variants': 5,
         'sprite_sheet': None,
         'images': []
     },
@@ -83,6 +83,17 @@ DECORATION = {
     'tree': {
         'path': BASE_PATH + 'decoration/tree_sprite_sheet.png',
         'dimensions': [33, 44],
+        'variants': 1,
+        'sprite_sheet': None,
+        'images': []
+    }
+}
+
+SPAWNER = {
+    'groups': ['player'],
+    'player': {
+        'path': BASE_PATH + 'spawner/player_sprite_sheet.png',
+        'dimensions': [15, 25],
         'variants': 1,
         'sprite_sheet': None,
         'images': []

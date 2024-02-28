@@ -5,8 +5,9 @@ from src.config import AUTO_TILE_GROUPS, AUTO_TILE_MAP, COLLISION_TILES, NEIGHBO
 
 
 class TileMap:
-    def __init__(self, game, path, tile_size=(16, 16)):
-        self.game = game
+    def __init__(self, camera, assets, path, tile_size=(16, 16)):
+        self.camera = camera
+        self.assets = assets
         self.tile_size = tile_size
         self.tile_map = {}
         self.off_grid_tiles = []
@@ -18,14 +19,21 @@ class TileMap:
 
     def render(self, surface, offset=(0, 0)):
         for tile in self.off_grid_tiles:
-            surface.blit(self.game.assets[tile['group']][tile['type']]['images'][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
-        
+            off_grid_image = self.assets[tile['group']][tile['type']]['images'][tile['variant']]
+
+            if self.camera == None:
+                off_grid_pos = (int(tile['pos'][0]) - offset[0], int(tile['pos'][1]) - offset[1])
+                surface.blit(off_grid_image, off_grid_pos)
+            elif self.camera.rect.x - off_grid_image.get_width() < tile['pos'][0] < self.camera.rect.x + self.camera.rect.width and self.camera.rect.y - off_grid_image.get_height() < tile['pos'][1] < self.camera.rect.y + self.camera.rect.height:
+                off_grid_pos = (int(tile['pos'][0]) - offset[0], int(tile['pos'][1]) - offset[1])
+                surface.blit(off_grid_image, off_grid_pos)
+            
         for x in range(offset[0] // self.tile_size[0], (offset[0] + surface.get_width()) // self.tile_size[0] + 1):
             for y in range(offset[1] // self.tile_size[1], (offset[1] + surface.get_height()) // self.tile_size[1] + 1):
                 check_location = str(x) + ';' + str(y)
                 if check_location in self.tile_map:
                     tile = self.tile_map[check_location]
-                    surface.blit(self.game.assets[tile['group']][tile['type']]['images'][tile['variant']], (tile['pos'][0] * self.tile_size[0] - offset[0], tile['pos'][1] * self.tile_size[1] - offset[1]))
+                    surface.blit(self.assets[tile['group']][tile['type']]['images'][tile['variant']], (tile['pos'][0] * self.tile_size[0] - offset[0], tile['pos'][1] * self.tile_size[1] - offset[1]))
 
     def tiles_around(self, pos):
         tiles = []
